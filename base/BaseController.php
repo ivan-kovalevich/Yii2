@@ -1,12 +1,10 @@
 <?php
 
-
-namespase app\base;
-
+namespace app\base;
 
 use yii\web\Controller;
 
 class BaseController extends Controller
 {
-	
+
 }
