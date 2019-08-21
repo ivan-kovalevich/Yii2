@@ -44,6 +44,9 @@ class SiteController extends Controller
     public function actions()
     {
         return [
+            'about' => [
+                'class' => 'app\controllers\actions\site\SiteAboutAction',
+            ],
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
@@ -93,6 +96,7 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
+
         Yii::$app->user->logout();
 
         return $this->goHome();
@@ -114,15 +118,5 @@ class SiteController extends Controller
         return $this->render('contact', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }
