@@ -1,7 +1,13 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$db = file_exists(__DIR__.'/db_local.php')?
+    (require __DIR__.'/db_local.php'):
+    (require __DIR__ . '/db.php');
+
+$mail = file_exists(__DIR__.'/mail_local.php')?
+    (require __DIR__.'/mail_local.php'):
+    (require __DIR__ . '/mail.php');
 
 $config = [
     'id' => 'basic-console',
@@ -14,6 +20,17 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'mailer' => $mail,
+        'activity' => [
+            'class' => 'app\components\ActivityComponent',
+            'classModel' => 'app\models\Activity',
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager'
+        ],
+        'rbac' => [
+            'class' => 'app\components\RbacComponent',
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

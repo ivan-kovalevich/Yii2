@@ -1,27 +1,50 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$db = file_exists(__DIR__.'/db_local.php')?
+    (require __DIR__.'/db_local.php'):
+    (require __DIR__ . '/db.php');
 
 $config = [
     'id' => 'basic',
+    'name' => 'My Calendar',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'language' => 'ru-RU',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'auth' => [
+            'class' => 'app\modules\auth\AuthModule',
+        ],
+    ],
     'components' => [
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager'
+        ],
+        'activity' => [
+            'class' => 'app\components\ActivityComponent',
+            'classModel' => 'app\models\Activity',
+        ],
+        'auth' => [
+            'class' => 'app\components\AuthComponent'
+        ],
+        'dao' => [
+            'class' => 'app\components\DaoComponent'
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'sfdgsvtsgfdsbgsdtgsdfbgadfg',
+            'cookieValidationKey' => '6o3uHKYS3avBe_ackeqP_rDSx60Iw2JN',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Users',
             'enableAutoLogin' => true,
+            'loginUrl' => ['auth/user/sign-in'],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -43,14 +66,17 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+//                '<action>' => 'site/<action>',
+//                '<module:\w+>/<action:\w+>' => '<module>/default/<action>',
+                //'<module:\w+>' => '<module>/default/index',
+//                'sign-up' => 'default/sign-up',
+//                'sign-in' => 'default/sign-in'
             ],
         ],
-        */
     ],
     'params' => $params,
 ];
@@ -61,14 +87,14 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 }
 
