@@ -20,7 +20,7 @@ class ActivityComponent extends BaseComponent
     public function createActivity(Activity &$activity): bool
     {
         $activity->files = UploadedFile::getInstances($activity, 'files');
-        $activity->user_id=\Yii::$app->user->getId();
+        $activity->user_id = \Yii::$app->user->getId();
 
         if (!$activity->save()) {
             return false;
@@ -56,5 +56,12 @@ class ActivityComponent extends BaseComponent
     {
         FileHelper::createDirectory(\Yii::getAlias('@webroot').'/images', 0777);
         return \Yii::getAlias('@webroot').'/images/';
+    }
+
+    public function getTodayNotifications(): ?array
+    {
+        return Activity::find()->andWhere(['dateStart' => date('Y-m-d')])
+            ->andWhere(['useNotification' => 1])
+            ->andWhere('email is not null')->all();
     }
 }

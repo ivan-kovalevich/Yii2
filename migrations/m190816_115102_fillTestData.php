@@ -12,16 +12,17 @@ class m190816_115102_fillTestData extends Migration
      */
     public function safeUp()
     {
-        $this->insert('user', [
+        $this->insert('users', [
             'id' => 1,
-            'email' => 'ivan@mail.ru',
-            'password_hash' => '123456'
+            'email' => 'mail@mail.ru',
+            'password_hash' => 'ojdei3ojijeidoj'
         ]);
-        $this->insert('user', [
+        $this->insert('users', [
             'id' => 2,
-            'email' => 'ivan555@mail22.ru',
-            'password_hash' => '123456'
+            'email' => 'mail22@mail22.ru',
+            'password_hash' => 'ojdei3ojijeidoj'
         ]);
+
 
         $this->batchInsert('activity', ['title', 'dateStart', 'user_id', 'useNotification'], [
             [\Yii::$app->security->generateRandomString(), date('Y-m-d'), 1, 0],
@@ -37,7 +38,7 @@ class m190816_115102_fillTestData extends Migration
      */
     public function safeDown()
     {
-        $this->delete('user');
+        $this->delete('users');
         $this->delete('activity');
     }
 

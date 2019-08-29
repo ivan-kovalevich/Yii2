@@ -4,22 +4,17 @@ namespace app\controllers\actions\activity;
 
 use app\base\BaseAction;
 use app\models\Activity;
-use yii\web\HttpException;
 use yii\web\Response;
 use yii\bootstrap\ActiveForm;
+use app\components\ActivityComponent;
 
 class ActivityCreateAction extends BaseAction
 {
 
     public function run()
     {
-
-        if(!\Yii::$app->rbac->canCreateActivity()){
-            throw new HttpException(403,'Not Auth method');
-        }
-
-        //создаем экземпляр модели
         /** @var Activity $model */
+        //создаем экземпляр модели
         $model = \Yii::$app->activity->getModel();
 
         //если отправили форму, то загружаем данные с формы в модель
@@ -33,9 +28,9 @@ class ActivityCreateAction extends BaseAction
             }
 
            if (\Yii::$app->activity->createActivity($model)) {
-               return $this->controller->redirect(['/activity/view','id'=>$model->id]);
+               return $this->controller->render('submit', ['model' => $model]);
            }
-//           print_r($model->getErrors());exit;
+
         }
         return $this->controller->render('create', ['model' =>$model]);
     }

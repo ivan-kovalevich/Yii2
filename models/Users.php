@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\models;
 
 use Yii;
@@ -19,19 +20,20 @@ use yii\web\IdentityInterface;
  *
  * @property Activity[] $activities
  */
+
+
 class Users extends UsersBase implements IdentityInterface
 {
-    public $password;
-
     const SCENARIO_SIGNUP = 'signup';
     const SCENARIO_SIGNIN = 'signin';
+
+    public $password;
 
     public function scenarioSignup(): self
     {
         $this->setScenario(self::SCENARIO_SIGNUP);
         return $this;
     }
-
     public function scenarioSignin(): self
     {
         $this->setScenario(self::SCENARIO_SIGNIN);
@@ -42,6 +44,7 @@ class Users extends UsersBase implements IdentityInterface
     {
         return array_merge([
             ['password', 'string', 'min' => 5],
+            ['email', 'email'],
             ['email', 'exist', 'on' => self::SCENARIO_SIGNIN],
             [['email'], 'unique', 'on' => self::SCENARIO_SIGNUP],
         ], parent::rules());
@@ -56,7 +59,7 @@ class Users extends UsersBase implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return Users::find()->andWhere(['id' => $id])->one();
+        return Users::find()->cache()->andWhere(['id' => $id])->one();
     }
 
     /**
@@ -73,11 +76,6 @@ class Users extends UsersBase implements IdentityInterface
         // TODO: Implement findIdentityByAccessToken() method.
     }
 
-    public function getUsername()
-    {
-        return $this->email;
-    }
-
     /**
      * Returns an ID that can uniquely identify a user identity.
      * @return string|int an ID that uniquely identifies a user identity.
@@ -85,6 +83,11 @@ class Users extends UsersBase implements IdentityInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
     }
 
     /**

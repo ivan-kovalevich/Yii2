@@ -12,7 +12,7 @@ class m190816_105823_CreateTableUser extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('user', [
+        $this->createTable('users', [
             'id' => $this->primaryKey(),
             'email' => $this->string(150)->notNull(),
             'password_hash' => $this->string(150)->notNull(),
@@ -23,7 +23,7 @@ class m190816_105823_CreateTableUser extends Migration
             'isDeleted' => $this->boolean()->notNull()->defaultValue(0)
         ]);
 
-        $this->createIndex('userEmailUni', 'user', 'email', true);
+        $this->createIndex('userEmailUni', 'users', 'email', true);
     }
 
     /**
@@ -31,8 +31,8 @@ class m190816_105823_CreateTableUser extends Migration
      */
     public function safeDown()
     {
-        $this->dropIndex('userEmailUni','user');
-        $this->dropTable('user');
+        $this->dropIndex('userEmailUni','users');
+        $this->dropTable('users');
     }
 
     /*

@@ -9,17 +9,8 @@ use yii\base\Model;
 
 class Activity extends ActivityBase
 {
-    public $author;
-//    public $title;
-//    public $description;
-//    public $dateStart;
-//    public $dateEnd;
-//    public $isBlocked;
-//    public $isRepeated;
-    public $repeatedType;
-//    public $useNotification;
-//    public $email;
     public $files;
+    public $repeatedType;
 
     public const REPEATED_TYPE = [
         1 => 'Ежедневно',
@@ -45,20 +36,22 @@ class Activity extends ActivityBase
     {
         return array_merge([
             ['title', 'trim'],
-            [['title', 'dateStart', 'dateEnd'], 'required'],
+            [['title', 'dateStart', 'dateEnd'],'required'],
             ['description', 'string', 'min' => 5, 'max' => 150],
             [['dateStart', 'dateEnd'], 'date', 'format' => 'php:Y-m-d'],
             ['dateEnd', 'compare', 'compareAttribute' => 'dateStart',
                 'operator' => '>=',
                 'message' => 'Событие должно заканчиваться не раньше его начала'
             ],
-            ['repeatedType', 'in', 'range' => array_keys(self::REPEATED_TYPE)],
-            [['isBlocked', 'useNotification', 'isRepeated'], 'boolean'],
+            ['repeatedType','in', 'range' => array_keys(self::REPEATED_TYPE)],
+            [['isBlocked','useNotification','isRepeated'], 'boolean'],
             ['files', 'file', 'extensions' => ['jpg', 'jpeg', 'png'], 'maxFiles' => 10],
             ['email', 'email'],
-            ['email', 'required', 'when' => function () {
+            ['email', 'required', 'when' => function(){
                 return $this->useNotification ? true : false;
-            }]], parent::rules());
+            } ],
+
+        ], parent::rules());
     }
 
     public function attributeLabels()
@@ -74,6 +67,7 @@ class Activity extends ActivityBase
             'useNotification' => 'Уведомление',
             'email' => 'E-mail',
             'files' => 'Прикрепить файлы',
+            'user_id' => 'Автор',
         ];
     }
 }

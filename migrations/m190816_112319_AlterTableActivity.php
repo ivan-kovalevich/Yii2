@@ -15,7 +15,7 @@ class m190816_112319_AlterTableActivity extends Migration
         $this->addColumn('activity', 'user_id', $this->integer()->notNull());
 
         $this->addForeignKey('activity_user_fk','activity','user_id',
-            'user', 'id', 'CASCADE', 'CASCADE');
+            'users', 'id', 'CASCADE', 'CASCADE');
     }
 
     /**

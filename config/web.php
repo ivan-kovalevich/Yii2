@@ -15,18 +15,24 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'auth' => [
+            'class' => 'app\modules\auth\AuthModule',
+        ],
+    ],
     'components' => [
         'authManager' => [
             'class' => 'yii\rbac\DbManager'
         ],
-        'rbac'=>['class'=>\app\components\RbacComponent::class],
         'activity' => [
             'class' => 'app\components\ActivityComponent',
             'classModel' => 'app\models\Activity',
         ],
-        'auth'=>['class'=>\app\components\AuthComponent::class],
+        'auth' => [
+            'class' => 'app\components\AuthComponent'
+        ],
         'dao' => [
-            'class' => app\components\DaoComponent::class,
+            'class' => 'app\components\DaoComponent'
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -38,6 +44,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\Users',
             'enableAutoLogin' => true,
+            'loginUrl' => ['auth/user/sign-in'],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -63,6 +70,11 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+//                '<action>' => 'site/<action>',
+//                '<module:\w+>/<action:\w+>' => '<module>/default/<action>',
+                //'<module:\w+>' => '<module>/default/index',
+//                'sign-up' => 'default/sign-up',
+//                'sign-in' => 'default/sign-in'
             ],
         ],
     ],
