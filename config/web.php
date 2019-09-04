@@ -9,12 +9,12 @@ $config = [
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'sfdgsvtsgfdsbgsdtgsdfbgadfg',
+            'cookieValidationKey' => 'hucoJeaOxCwAE8ktW9IwuUVD5TTBmNit',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -43,14 +43,53 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+        'formatter' => [
+            'datetimeFormat' => 'd.m.Y H:i:s',
+            'dateFormat' => 'd.m.Y',
+            'currencyCode' => 'RUB',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => ''
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
+        'i18n' => [
+            'translations' => [
+                'rbac' => [
+                    'class' => \yii\i18n\PhpMessageSource::className(),
+                    'basePath' => '@app/modules/rbac/messages',
+                ],
+            ],
+        ],
+    ],
+    'modules' => [
+        'rbacplus' =>  [
+            'class' => 'johnitvn\rbacplus\Module',
+            'userModelClassName'=>null,
+            'userModelIdField'=>'id',
+            'userModelLoginField'=>'email',
+            'userModelLoginFieldLabel'=>null,
+            'userModelExtraDataColumls'=>[
+                [
+                    'attributes'=>'created_at',
+                    'value'=>function($model){
+                        return date('d.m.Y H:i:s', $model->created_at);
+                    }
+                ]
+            ],
+            'beforeCreateController'=>null,
+            'beforeAction'=>null
+        ],
+        'gridview' =>  [
+            'class' => '\kartik\grid\Module'
+        ]
     ],
     'params' => $params,
 ];
@@ -61,14 +100,14 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 }
 

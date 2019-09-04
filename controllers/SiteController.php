@@ -2,15 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -124,5 +124,27 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    /**
+     * Displays hello page.
+     *
+     * @return string
+     */
+    public function actionCreateUser()
+    {
+
+        $user = new User();
+
+        $user->auth_key = Yii::$app->security->generateRandomString();
+
+        
+
+        if ($user->load(Yii::$app->request->post()) && $user->save()) {
+            return $this->redirect(['create-user', 'user'=>$user->username]);
+        } else {
+            print_r($user->getErrors());
+        }
+        return $this->render('create-user', ['model' => $user]);
     }
 }
