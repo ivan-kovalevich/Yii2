@@ -9,18 +9,17 @@ use Yii;
  *
  * @property int $id
  * @property string $title
- * @property string $description
- * @property string $dateStart
- * @property string $dateEnd
- * @property int $isBlocked
- * @property int $isRepeated
- * @property int $useNotification
- * @property string $email
- * @property string $createAt
- * @property int $isDeleted
+ * @property string $start_day
+ * @property string $end_day
  * @property int $user_id
+ * @property string $body
+ * @property int $is_repeat
+ * @property int $is_block
+ * @property string $created_at
  *
- * @property Users $user
+ * @property User $user
+ * @property DayActivity[] $dayActivities
+ * @property Day[] $days
  */
 class ActivityBase extends \yii\db\ActiveRecord
 {
@@ -38,12 +37,12 @@ class ActivityBase extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'dateStart', 'user_id'], 'required'],
-            [['description'], 'string'],
-            [['dateStart', 'dateEnd', 'createAt'], 'safe'],
-            [['isBlocked', 'isRepeated', 'useNotification', 'isDeleted', 'user_id'], 'integer'],
-            [['title', 'email'], 'string', 'max' => 100],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['title', 'user_id'], 'required'],
+            [['start_day', 'end_day', 'created_at'], 'safe'],
+            [['body'], 'string'],
+            [['is_repeat', 'is_block', 'user_id'], 'integer'],
+            [['title'], 'string', 'max' => 250],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -54,17 +53,14 @@ class ActivityBase extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'title' => Yii::t('app', 'Title'),
-            'description' => Yii::t('app', 'Description'),
-            'dateStart' => Yii::t('app', 'Date Start'),
-            'dateEnd' => Yii::t('app', 'Date End'),
-            'isBlocked' => Yii::t('app', 'Is Blocked'),
-            'isRepeated' => Yii::t('app', 'Is Repeated'),
-            'useNotification' => Yii::t('app', 'Use Notification'),
-            'email' => Yii::t('app', 'Email'),
-            'createAt' => Yii::t('app', 'Create At'),
-            'isDeleted' => Yii::t('app', 'Is Deleted'),
-            'user_id' => Yii::t('app', 'User ID'),
+            'title' => Yii::t('app', 'Название'),
+            'start_day' => Yii::t('app', 'Начало активности'),
+            'end_day' => Yii::t('app', 'Конец активности'),
+            'body' => Yii::t('app', 'Описание'),
+            'is_repeat' => Yii::t('app', 'Повторяющееся'),
+            'is_block' => Yii::t('app', 'Блокирующее'),
+            'user_id' => Yii::t('app', 'ID пользователя'),
+            'created_at' => Yii::t('app', 'Дата создания'),
         ];
     }
 
@@ -73,6 +69,22 @@ class ActivityBase extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Users::class, ['id' => 'user_id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDayActivities()
+    {
+        return $this->hasMany(DayActivity::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDays()
+    {
+        return $this->hasMany(Day::className(), ['id' => 'day_id'])->viaTable('day_activity', ['activity_id' => 'id']);
     }
 }

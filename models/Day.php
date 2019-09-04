@@ -1,21 +1,28 @@
 <?php
 
-
 namespace app\models;
 
+/**
+ * Day класс
+ *
+ * Отражает сущность день в календаре
+ */
 
 use yii\base\Model;
 
 class Day extends Model
 {
-    public $isHoliday;
-    public $date;
+    /**
+     * Рабочий день или нет
+     *
+     * @var boolean
+     */
+    public $working;
 
-    public function attributeLabels()
-    {
-        return [
-            'isHoliday' => 'Выходной',
-            'date' => 'Число'
-        ];
-    }
+    /**
+     * Связь с событиями по ID
+     *
+     * @var array
+     */
+    public $activityID;
 }

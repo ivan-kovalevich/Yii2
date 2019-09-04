@@ -2,15 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::class,
+                'class' => AccessControl::className(),
                 'only' => ['logout'],
                 'rules' => [
                     [
@@ -30,7 +30,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::class,
+                'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -44,10 +44,6 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'about' => [
-                'class' => 'app\controllers\actions\site\SiteAboutAction',
-            ],
-
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
@@ -65,10 +61,41 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        if(!\Yii::$app->user->isGuest){
-            $this->redirect(['activity-crud/index']);
-        }
         return $this->render('index');
+    }
+
+    /**
+     * Login action.
+     *
+     * @return Response|string
+     */
+    public function actionLogin()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        }
+
+        $model->password = '';
+        return $this->render('login', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Logout action.
+     *
+     * @return Response
+     */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
     }
 
     /**
@@ -90,13 +117,34 @@ class SiteController extends Controller
     }
 
     /**
-     * Logout action.
+     * Displays about page.
      *
-     * @return Response
+     * @return string
      */
-    public function actionLogout()
+    public function actionAbout()
     {
-        Yii::$app->user->logout();
-        return $this->goHome();
+        return $this->render('about');
+    }
+
+    /**
+     * Displays hello page.
+     *
+     * @return string
+     */
+    public function actionCreateUser()
+    {
+
+        $user = new User();
+
+        $user->auth_key = Yii::$app->security->generateRandomString();
+
+        
+
+        if ($user->load(Yii::$app->request->post()) && $user->save()) {
+            return $this->redirect(['create-user', 'user'=>$user->username]);
+        } else {
+            print_r($user->getErrors());
+        }
+        return $this->render('create-user', ['model' => $user]);
     }
 }

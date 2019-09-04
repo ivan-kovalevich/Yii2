@@ -1,13 +1,7 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = file_exists(__DIR__.'/db_local.php')?
-    (require __DIR__.'/db_local.php'):
-    (require __DIR__ . '/db.php');
-
-$mail = file_exists(__DIR__.'/mail_local.php')?
-    (require __DIR__.'/mail_local.php'):
-    (require __DIR__ . '/mail.php');
+$db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'basic-console',
@@ -17,22 +11,14 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        '@tests' => '@app/tests',
     ],
     'components' => [
-        'mailer' => $mail,
-        'activity' => [
-            'class' => 'app\components\ActivityComponent',
-            'classModel' => 'app\models\Activity',
-        ],
-        'authManager' => [
-            'class' => 'yii\rbac\DbManager'
-        ],
-        'rbac' => [
-            'class' => 'app\components\RbacComponent',
-        ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\caching\MemCache',
+            'useMemcached' => true
+        ],
+        'session'=>[
+            'class'=>'yii\web\CacheSession'
         ],
         'log' => [
             'targets' => [
@@ -43,6 +29,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
     ],
     'params' => $params,
     /*

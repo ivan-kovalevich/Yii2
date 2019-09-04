@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Activity;
@@ -17,8 +18,8 @@ class ActivitySearch extends Activity
     public function rules()
     {
         return [
-            [['id', 'isBlocked', 'isRepeated', 'useNotification', 'isDeleted', 'user_id'], 'integer'],
-            [['title', 'description', 'dateStart', 'dateEnd', 'email', 'createAt'], 'safe'],
+            [['id', 'user_id'], 'integer'],
+            [['title', 'start_day', 'end_day', 'body'], 'safe'],
         ];
     }
 
@@ -40,13 +41,26 @@ class ActivitySearch extends Activity
      */
     public function search($params)
     {
-        $query = Activity::find()->cache();
+        $query = Activity::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 10
+            ],
+            'sort' => [
+                'defaultOrder' =>[
+                    'start_day'=>SORT_DESC
+                ]
+            ]
         ]);
+
+        $dataProvider->getModels();
+        $dataProvider->getCount();
+        $dataProvider->getTotalCount();
+        $dataProvider->getKeys();
 
         $this->load($params);
 
@@ -59,22 +73,13 @@ class ActivitySearch extends Activity
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'dateStart' => $this->dateStart,
-            'dateEnd' => $this->dateEnd,
-            'isBlocked' => $this->isBlocked,
-            'isRepeated' => $this->isRepeated,
-            'useNotification' => $this->useNotification,
-            'createAt' => $this->createAt,
-            'isDeleted' => $this->isDeleted,
+            'start_day' => $this->start_day,
+            'end_day' => $this->end_day,
             'user_id' => $this->user_id,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'email', $this->email]);
-
-        $query->andWhere(['user_id' => \Yii::$app->user->getId()]);
-        $query->with('user');
+            ->andFilterWhere(['like', 'body', $this->body]);
 
         return $dataProvider;
     }
